@@ -39,7 +39,6 @@ button:focus {
     box-shadow: 0 2px 12px rgba(11, 27, 45, 0.04);
 }
 
-/* Give the main layout a top padding equal to navbar height so content isn't hidden */
 .main-layout {
     --navbar-height: 72px;
     padding-top: var(--navbar-height);
