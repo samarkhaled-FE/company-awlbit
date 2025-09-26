@@ -1,0 +1,89 @@
+.cta-exp {
+  background: #0066FF;
+  color: #E6EEFF;
+  padding: 56px 0
+}
+
+.cta-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px
+}
+
+.cta-left {
+  max-width: 760px
+}
+
+.cta-badges {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 10px
+}
+
+.cta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, .08);
+  color: #D7E2FF;
+  border: 1px solid rgba(255, 255, 255, .16);
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-size: 13px
+}
+
+.cta-title {
+  margin: 8px 0 8px;
+  font-size: clamp(22px, 3.6vw, 40px);
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: .2px
+}
+
+.cta-sub {
+  margin: 0;
+  font-size: 15px;
+  color: #C8D6F5
+}
+
+.cta-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px
+}
+
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  border: 1px solid #3b82f6;
+  color: #0B1B2D;
+  background: #fff
+}
+
+.cta-btn.primary {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6
+}
+
+.cta-btn.primary:hover {
+  background: #2563eb
+}
+
+@media (max-width:768px) {
+  .cta-wrap {
+    flex-direction: column;
+    align-items: flex-start
+  }
+
+  .cta-right {
+    width: 100%
+  }
+}

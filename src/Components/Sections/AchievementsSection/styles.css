@@ -1,0 +1,82 @@
+.achievements-section {
+  background: #0B1A2C;
+  padding: 56px 0;
+  color: #E6EEFF
+}
+
+.ach-head {
+  text-align: center;
+  margin-bottom: 22px
+}
+
+.ach-head h2 {
+  margin: 0;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: clamp(20px, 3.2vw, 28px)
+}
+
+.ach-underline {
+  width: 72px;
+  height: 4px;
+  background: #1e40af;
+  border-radius: 999px;
+  margin: 10px auto 0
+}
+
+.ach-sub {
+  margin: 8px 0 0;
+  color: #C8D6F5
+}
+
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px
+}
+
+.ach-card {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 18px 14px;
+  text-align: center;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .12), inset 0 -3px 0 #0066FF
+}
+
+.ach-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #e2e8f0;
+  color: #0B1A2C;
+  margin: 0 auto 8px
+}
+
+.ach-value {
+  display: block;
+  font-size: 26px;
+  color: #0B1A2C
+}
+
+.ach-label {
+  display: block;
+  color: #334155;
+  margin-top: 2px
+}
+
+@media (max-width:1024px) {
+  .ach-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+  }
+}
+
+@media (max-width:640px) {
+  .ach-grid {
+    grid-template-columns: 1fr
+  }
+}

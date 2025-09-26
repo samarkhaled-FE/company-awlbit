@@ -1,0 +1,11 @@
+.company-menu{background:#0B1B2D;color:#E6EEFF;padding:48px 0}
+.cm-head h2{margin:0 0 6px;font-size:clamp(18px,3vw,24px);color:#ffffff}
+.cm-head p{margin:0 0 18px;color:#C8D6F5}
+.cm-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.cm-card{display:flex;gap:12px;align-items:flex-start;background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:14px 12px;color:#0f172a;text-decoration:none;box-shadow:0 8px 22px rgba(0,0,0,.16)}
+.cm-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.22)}
+.cm-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:rgba(59,130,246,.12);color:#3b82f6}
+.cm-title{margin:0;font-weight:800;color:#0f172a}
+.cm-desc{margin:4px 0 0;color:#334155;font-size:13px}
+
+/* Always one item per row */
