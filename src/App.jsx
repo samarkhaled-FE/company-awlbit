@@ -1,6 +1,8 @@
-
 import { Route, Routes } from "react-router-dom";
 import { useLanguageContext } from "@contexts/LanguageContext";
+
+// ✅ إضافة ScrollToTop
+import ScrollToTop from "@components/ScrollToTop";
 
 // Layouts:
 import MainLayout from "@layouts/MainLayout";
@@ -29,6 +31,9 @@ function App() {
 
   return (
     <div className="App relative w-full" dir={language === "ar" ? "rtl" : "ltr"}>
+      {/* ✅ إضافة ScrollToTop هنا */}
+      <ScrollToTop />
+      
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />

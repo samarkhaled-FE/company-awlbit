@@ -2,9 +2,14 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 function useScrollToHash() {
-    const { hash } = useLocation();
+    const { hash, pathname } = useLocation();
 
     useEffect(() => {
+        // ✅ إذا كانت صفحة Solutions، متسكرولش خالص!
+        if (pathname === '/solutions') {
+            return; // اخرج من الفانكشن ولا تعمل حاجة
+        }
+
         if (!hash) return;
 
         const sectionId = hash.slice(1);
@@ -20,7 +25,7 @@ function useScrollToHash() {
 
             window.scrollTo({ top: offset, behavior: 'smooth' });
         }
-    }, [hash]);
+    }, [hash, pathname]);
 }
 
 export default useScrollToHash;

@@ -1,9 +1,8 @@
-// ContactPage.jsx أو ContactSection.jsx - التحديث النهائي
 import React, { useEffect } from 'react';
 import { useLanguageContext } from "@contexts/LanguageContext";
 import { useState } from "react";
 
-function ContactPage() { // أو ContactSection
+function ContactPage() {
     const { language } = useLanguageContext();
     const isArabic = language === 'ar';
 
@@ -20,6 +19,7 @@ function ContactPage() { // أو ContactSection
 
     const [form, setForm] = useState({
         name: '',
+        email: '', // ✅ إضافة email field
         phone: '',
         service: ''
     });
@@ -51,16 +51,22 @@ function ContactPage() { // أو ContactSection
     ];
 
     const validateField = (field, value) => {
-        // 🔥 تحديث regex للرقم المصري
-        const phoneRegex = /^\+?20[0-9\s()-]{8,12}$/;
+        // ✅ Updated regex - accepts any phone number format
+        const phoneRegex = /^[\+]?[0-9\s\-\(\)]{7,20}$/;
+        // ✅ Email validation regex
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         switch (field) {
             case 'name':
                 if (!value.trim()) return isArabic ? 'الاسم مطلوب' : 'Name is required';
                 return '';
-            case 'phone':
-                if (!value.trim()) return isArabic ? 'رقم الموبايل مطلوب' : 'Mobile number is required';
-                if (!phoneRegex.test(value)) return isArabic ? 'رقم موبايل مصري غير صالح' : 'Invalid Egyptian mobile number';
+            case 'email': // ✅ Email validation
+                if (!value.trim()) return isArabic ? 'البريد الإلكتروني مطلوب' : 'Email is required';
+                if (!emailRegex.test(value)) return isArabic ? 'البريد الإلكتروني غير صالح' : 'Invalid email address';
+                return '';
+            case 'phone': // ✅ Updated phone validation - accepts any phone
+                if (!value.trim()) return isArabic ? 'رقم الهاتف مطلوب' : 'Phone number is required';
+                if (!phoneRegex.test(value)) return isArabic ? 'رقم الهاتف غير صالح' : 'Invalid phone number';
                 return '';
             case 'service':
                 if (!value) return isArabic ? 'يرجى اختيار خدمة' : 'Please select a service';
@@ -70,13 +76,13 @@ function ContactPage() { // أو ContactSection
         }
     };
 
-    // 🔥 النظام المحدث للإرسال المباشر - بدون إيميل المستخدم نهائياً
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         // التحقق من صحة البيانات
         const newErrors = {};
         newErrors.name = validateField('name', form.name) || undefined;
+        newErrors.email = validateField('email', form.email) || undefined; // ✅ Validate email
         newErrors.phone = validateField('phone', form.phone) || undefined;
         newErrors.service = validateField('service', form.service) || undefined;
 
@@ -87,16 +93,17 @@ function ContactPage() { // أو ContactSection
             setIsSubmitting(true);
 
             try {
-                // 🔥 إرسال مباشر لـ info@awlbit.com
                 const formData = new FormData();
                 formData.append('name', form.name);
+                formData.append('email', form.email); // ✅ Include email in submission
                 formData.append('phone', form.phone);
                 formData.append('service', form.service);
                 formData.append('message', `
 طلب خدمة جديد من موقع AwlBit:
 
 الاسم: ${form.name}
-رقم الموبايل: ${form.phone}
+البريد الإلكتروني: ${form.email}
+رقم الهاتف: ${form.phone}
 الخدمة المطلوبة: ${form.service}
 
 تاريخ الطلب: ${new Date().toLocaleDateString('ar-EG')}
@@ -113,14 +120,13 @@ function ContactPage() { // أو ContactSection
                 });
 
                 if (response.ok) {
-                    // رسالة نجاح
                     alert(isArabic ? 
                         'تم إرسال طلبك بنجاح! \n\nسيتواصل معك فريق AwlBit خلال 24 ساعة.' : 
                         'Your request has been sent successfully! \n\nAwlBit team will contact you within 24 hours.'
                     );
                     
                     // إعادة تعيين النموذج
-                    setForm({ name: '', phone: '', service: '' });
+                    setForm({ name: '', email: '', phone: '', service: '' }); // ✅ Reset email too
                     setErrors({});
                 } else {
                     throw new Error('Failed to submit');
@@ -128,7 +134,6 @@ function ContactPage() { // أو ContactSection
             } catch (error) {
                 console.error('Form submission error:', error);
                 
-                // رسالة خطأ ودية
                 alert(isArabic ? 
                     'عذراً، حدث خطأ في الإرسال. \n\nيرجى المحاولة مرة أخرى أو الاتصال بنا مباشرة على: \n+20 100 467 7036' :
                     'Sorry, there was an error sending your request. \n\nPlease try again or contact us directly at: \n+20 100 467 7036'
@@ -148,7 +153,6 @@ function ContactPage() { // أو ContactSection
                     <div className="order-2 lg:order-1">
                         <div className="w-full h-96 flex items-center justify-center">
                             <div className="contact-animation">
-                                {/* نفس الأنيميشن كما هو */}
                                 <div className="email-container">
                                     <div className="email-icon">
                                         <svg className="w-24 h-24 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,10 +243,46 @@ function ContactPage() { // أو ContactSection
                                     {errors.name && <p style={{ color: '#0B1B2D' }} className="text-sm mt-1">{errors.name}</p>}
                                 </div>
 
-                                {/* 🔥 رقم الموبايل - محدث للرقم المصري */}
+                                {/* ✅ Email Field */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        {isArabic ? 'رقم الموبايل' : 'Mobile Number'} <span style={{ color: '#0B1B2D' }}>*</span>
+                                        {isArabic ? 'البريد الإلكتروني' : 'Email Address'} <span style={{ color: '#0B1B2D' }}>*</span>
+                                    </label>
+                                    <div className="relative">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                        <input
+                                            type="email"
+                                            value={form.email}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                setForm({ ...form, email: value });
+                                                if (errors.email) setErrors({ ...errors, email: validateField('email', value) });
+                                            }}
+                                            style={{
+                                                borderColor: errors.email ? '#0B1B2D' : '#d1d5db',
+                                                outline: 'none'
+                                            }}
+                                            onFocus={(e) => e.target.style.borderColor = '#0B1B2D'}
+                                            onBlur={(e) => {
+                                                if (!errors.email) {
+                                                    e.target.style.borderColor = '#d1d5db';
+                                                }
+                                            }}
+                                            className="w-full pl-10 pr-4 py-3 border bg-white rounded-lg transition duration-200"
+                                            placeholder={isArabic ? 'أدخل بريدك الإلكتروني' : 'Enter your email address'}
+                                        />
+                                    </div>
+                                    {errors.email && <p style={{ color: '#0B1B2D' }} className="text-sm mt-1">{errors.email}</p>}
+                                </div>
+
+                                {/* ✅ Phone Field - Updated placeholder and validation */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        {isArabic ? 'رقم الهاتف' : 'Phone Number'} <span style={{ color: '#0B1B2D' }}>*</span>
                                     </label>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -270,7 +310,7 @@ function ContactPage() { // أو ContactSection
                                                 }
                                             }}
                                             className="w-full pl-10 pr-4 py-3 border bg-white rounded-lg transition duration-200"
-                                            placeholder="+20 1X XXXX XXXX"
+                                            placeholder="+20 XXXX XX XX" // ✅ Updated placeholder as requested
                                         />
                                     </div>
                                     {errors.phone && <p style={{ color: '#0B1B2D' }} className="text-sm mt-1">{errors.phone}</p>}
@@ -344,7 +384,6 @@ function ContactPage() { // أو ContactSection
                                     )}
                                 </button>
 
-                                {/* 🔥 النص المحدث - بدون أيقونة الدايرة */}
                                 <div className="text-center">
                                     <p className="text-sm text-gray-500">
                                         {isArabic
