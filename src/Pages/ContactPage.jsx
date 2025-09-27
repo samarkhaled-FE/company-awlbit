@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLanguageContext } from "@contexts/LanguageContext";
-import { useState } from "react";
 
 function ContactPage() {
     const { language } = useLanguageContext();
@@ -19,7 +18,7 @@ function ContactPage() {
 
     const [form, setForm] = useState({
         name: '',
-        email: '', // ✅ إضافة email field
+        email: '',
         phone: '',
         service: ''
     });
@@ -28,43 +27,26 @@ function ContactPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const services = [
-        {
-            en: 'Oracle Fusion Technical Support',
-            ar: 'دعم Oracle Fusion الفني'
-        },
-        {
-            en: 'Oracle APEX Development',
-            ar: 'تطوير تطبيقات Oracle APEX'
-        },
-        {
-            en: 'EHR Integration with Oracle',
-            ar: 'تكامل EHR مع Oracle'
-        },
-        {
-            en: 'IT Consulting',
-            ar: 'استشارات تقنية'
-        },
-        {
-            en: 'Custom Solutions Development',
-            ar: 'تطوير حلول مخصصة'
-        }
+        { en: 'Oracle Fusion Technical Support', ar: 'دعم Oracle Fusion الفني' },
+        { en: 'Oracle APEX Development', ar: 'تطوير تطبيقات Oracle APEX' },
+        { en: 'EHR Integration with Oracle', ar: 'تكامل EHR مع Oracle' },
+        { en: 'IT Consulting', ar: 'استشارات تقنية' },
+        { en: 'Custom Solutions Development', ar: 'تطوير حلول مخصصة' }
     ];
 
     const validateField = (field, value) => {
-        // ✅ Updated regex - accepts any phone number format
         const phoneRegex = /^[\+]?[0-9\s\-\(\)]{7,20}$/;
-        // ✅ Email validation regex
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         switch (field) {
             case 'name':
                 if (!value.trim()) return isArabic ? 'الاسم مطلوب' : 'Name is required';
                 return '';
-            case 'email': // ✅ Email validation
+            case 'email':
                 if (!value.trim()) return isArabic ? 'البريد الإلكتروني مطلوب' : 'Email is required';
                 if (!emailRegex.test(value)) return isArabic ? 'البريد الإلكتروني غير صالح' : 'Invalid email address';
                 return '';
-            case 'phone': // ✅ Updated phone validation - accepts any phone
+            case 'phone':
                 if (!value.trim()) return isArabic ? 'رقم الهاتف مطلوب' : 'Phone number is required';
                 if (!phoneRegex.test(value)) return isArabic ? 'رقم الهاتف غير صالح' : 'Invalid phone number';
                 return '';
@@ -82,7 +64,7 @@ function ContactPage() {
         // التحقق من صحة البيانات
         const newErrors = {};
         newErrors.name = validateField('name', form.name) || undefined;
-        newErrors.email = validateField('email', form.email) || undefined; // ✅ Validate email
+        newErrors.email = validateField('email', form.email) || undefined;
         newErrors.phone = validateField('phone', form.phone) || undefined;
         newErrors.service = validateField('service', form.service) || undefined;
 
@@ -93,12 +75,13 @@ function ContactPage() {
             setIsSubmitting(true);
 
             try {
-                const formData = new FormData();
-                formData.append('name', form.name);
-                formData.append('email', form.email); // ✅ Include email in submission
-                formData.append('phone', form.phone);
-                formData.append('service', form.service);
-                formData.append('message', `
+                // ✅ الطريقة الصحيحة: AJAX endpoint مع JSON
+                const payload = {
+                    name: form.name,
+                    email: form.email,
+                    phone: form.phone,
+                    service: form.service,
+                    message: `
 طلب خدمة جديد من موقع AwlBit:
 
 الاسم: ${form.name}
@@ -108,28 +91,42 @@ function ContactPage() {
 
 تاريخ الطلب: ${new Date().toLocaleDateString('ar-EG')}
 الوقت: ${new Date().toLocaleTimeString('ar-EG')}
-                `);
-                formData.append('_subject', `طلب خدمة جديد من ${form.name} - ${form.service}`);
-                formData.append('_template', 'table');
-                formData.append('_next', window.location.href);
-                formData.append('_captcha', 'false');
-                
-                const response = await fetch('https://formsubmit.co/info@awlbit.com', {
-                    method: 'POST',
-                    body: formData
-                });
+                    `,
+                    _subject: `طلب خدمة جديد من ${form.name} - ${form.service}`,
+                    _captcha: 'false'
+                };
 
-                if (response.ok) {
+                // const response = await fetch('https://formsubmit.co/ajax/info@awlbit.com', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'Accept': 'application/json'
+                //     },
+                //     body: JSON.stringify(payload)
+                // });
+
+
+                     // ✅ AJAX endpoint مع JSON headers
+            const response = await fetch('https://formsubmit.co/ajax/samarkhaledabd100@gmail.com', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+                const data = await response.json();
+
+                if (response.ok && data.success) {
                     alert(isArabic ? 
                         'تم إرسال طلبك بنجاح! \n\nسيتواصل معك فريق AwlBit خلال 24 ساعة.' : 
                         'Your request has been sent successfully! \n\nAwlBit team will contact you within 24 hours.'
                     );
                     
-                    // إعادة تعيين النموذج
-                    setForm({ name: '', email: '', phone: '', service: '' }); // ✅ Reset email too
+                    setForm({ name: '', email: '', phone: '', service: '' });
                     setErrors({});
                 } else {
-                    throw new Error('Failed to submit');
+                    throw new Error(data.message || 'Failed to submit');
                 }
             } catch (error) {
                 console.error('Form submission error:', error);
@@ -243,7 +240,7 @@ function ContactPage() {
                                     {errors.name && <p style={{ color: '#0B1B2D' }} className="text-sm mt-1">{errors.name}</p>}
                                 </div>
 
-                                {/* ✅ Email Field */}
+                                {/* Email Field */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         {isArabic ? 'البريد الإلكتروني' : 'Email Address'} <span style={{ color: '#0B1B2D' }}>*</span>
@@ -279,7 +276,7 @@ function ContactPage() {
                                     {errors.email && <p style={{ color: '#0B1B2D' }} className="text-sm mt-1">{errors.email}</p>}
                                 </div>
 
-                                {/* ✅ Phone Field - Updated placeholder and validation */}
+                                {/* Phone Field */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         {isArabic ? 'رقم الهاتف' : 'Phone Number'} <span style={{ color: '#0B1B2D' }}>*</span>
@@ -310,7 +307,7 @@ function ContactPage() {
                                                 }
                                             }}
                                             className="w-full pl-10 pr-4 py-3 border bg-white rounded-lg transition duration-200"
-                                            placeholder="+20 XXXX XX XX" // ✅ Updated placeholder as requested
+                                            placeholder="+20 XXXX XX XX"
                                         />
                                     </div>
                                     {errors.phone && <p style={{ color: '#0B1B2D' }} className="text-sm mt-1">{errors.phone}</p>}
